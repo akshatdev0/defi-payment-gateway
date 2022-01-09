@@ -1,12 +1,12 @@
 import { ethers } from "hardhat";
+import { Signer } from "ethers";
 import { expect } from "chai";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 
 import { Foo } from "../../../types/Foo";
 import { Foo__factory } from "../../../types";
 
 describe("Foo Token Unit tests", function () {
-  let admin: SignerWithAddress;
+  let admin: Signer;
   let foo: Foo;
 
   const name = "Foo";

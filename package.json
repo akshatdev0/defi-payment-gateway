@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "author": "Anonymous",
   "devDependencies": {
+    "@defi-wonderland/smock": "^2.0.7",
     "@ethersproject/abi": "^5.4.0",
     "@ethersproject/abstract-signer": "^5.4.1",
     "@ethersproject/bignumber": "^5.4.1",
@@ -11,6 +12,7 @@
     "@ethersproject/providers": "^5.4.3",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/hardhat-upgrades": "^1.12.1",
     "@typechain/ethers-v5": "^7.0.1",
     "@typechain/hardhat": "^2.3.0",
     "@types/chai": "^4.2.21",
@@ -31,7 +33,6 @@
     "hardhat": "^2.6.0",
     "hardhat-gas-reporter": "^1.0.4",
     "lint-staged": "^11.1.2",
-    "mocha": "^9.0.3",
     "prettier": "^2.3.2",
     "prettier-plugin-solidity": "^1.0.0-beta.17",
     "shelljs": "^0.8.4",
@@ -59,7 +60,7 @@
   },
   "scripts": {
     "clean": "hardhat clean",
-    "compile": "hardhat compile",
+    "compile": "hardhat typechain --config hardhat.config.ts",
     "deploy": "hardhat deploy:foo",
     "lint": "yarn run lint:sol && yarn run lint:ts && yarn run prettier:check",
     "lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
@@ -70,6 +71,7 @@
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.3.2"
+    "@openzeppelin/contracts": "^4.4.1",
+    "@openzeppelin/contracts-upgradeable": "^4.4.1"
   }
 }
