@@ -8,45 +8,47 @@ import { keccak, bigNumberify, getCreate2Address } from "../shared/utilities";
 
 chai.use(smock.matchers);
 
-describe("WalletFactory Unit tests", function () {
+describe("WalletFactory Unit Tests", function () {
   // Accounts
   let deployer: Signer;
   let owner: Signer;
-  //   let alice: Signer;
-  //   let bob: Signer;
-  //   let eve: Signer;
+  let treasury: Signer;
 
   let deployerAddress: string;
   let ownerAddress: string;
-  //   let aliceAddress: string;
-  //   let bobAddress: string;
-  //   let eveAddress: string;
+  let treasuryAddress: string;
 
-  let factory: WalletFactory;
+  let walletFactory: WalletFactory;
 
   const USER_IDENTIFIER_1 = keccak("1");
+  const USER_IDENTIFIER_2 = keccak("2");
 
   before(async function () {
-    [deployer, owner] = await ethers.getSigners();
-    [deployerAddress, ownerAddress] = await Promise.all([deployer.getAddress(), owner.getAddress()]);
-  });
+    [deployer, owner, treasury] = await ethers.getSigners();
+    [deployerAddress, ownerAddress, treasuryAddress] = await Promise.all([
+      deployer.getAddress(),
+      owner.getAddress(),
+      treasury.getAddress(),
+    ]);
 
-  beforeEach(async function () {
     // Deploy WalletFactory
-    const factory__factory = await new WalletFactory__factory(deployer);
-    factory = (await upgrades.deployProxy(factory__factory, [ownerAddress])) as WalletFactory;
-    await factory.deployed();
+    const walletFactory__factory = await new WalletFactory__factory(deployer);
+    walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
+      ownerAddress,
+      treasuryAddress,
+    ])) as WalletFactory;
+    await walletFactory.deployed();
   });
 
   describe("validations", function () {
     it("has an owner", async function () {
-      expect(await factory.owner()).to.equal(ownerAddress);
+      expect(await walletFactory.owner()).to.equal(ownerAddress);
     });
   });
 
   describe("createWallet", function () {
     it("can only be called by owner", async function () {
-      await expect(factory.connect(deployer).createWallet(USER_IDENTIFIER_1)).to.be.revertedWith(
+      await expect(walletFactory.connect(deployer).createWallet(USER_IDENTIFIER_1)).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
     });
@@ -54,15 +56,43 @@ describe("WalletFactory Unit tests", function () {
     it("owner creates a new wallet", async function () {
       const identifier = USER_IDENTIFIER_1;
       const bytecode = Wallet__factory.bytecode;
-      const walletAddress = getCreate2Address(factory.address, identifier, bytecode);
+      const walletAddress = getCreate2Address(walletFactory.address, identifier, bytecode);
 
-      await expect(factory.connect(owner).createWallet(identifier))
-        .to.emit(factory, "WalletCreated")
+      await expect(walletFactory.connect(owner).createWallet(identifier))
+        .to.emit(walletFactory, "WalletCreated")
         .withArgs(identifier, walletAddress, bigNumberify(1));
-      await expect(factory.connect(owner).createWallet(identifier)).to.be.reverted; // WALLET_EXISTS
-      expect(await factory.getWallet(identifier)).to.eq(walletAddress);
-      expect(await factory.allWallets(0)).to.eq(walletAddress);
-      expect(await factory.totalWallets()).to.eq(1);
+      await expect(walletFactory.connect(owner).createWallet(identifier)).to.be.reverted; // WALLET_EXISTS
+      expect(await walletFactory.getWallet(identifier)).to.eq(walletAddress);
+      expect(await walletFactory.allWallets(0)).to.eq(walletAddress);
+      expect(await walletFactory.totalWallets()).to.eq(1);
+
+      const wallet = new Wallet__factory(deployer).attach(walletAddress);
+      expect(await wallet.owner()).to.eq(walletFactory.address);
+
+      await expect(wallet.connect(deployer).initialize(deployerAddress)).to.be.revertedWith(
+        "Initializable: contract is already initialized",
+      );
+    });
+
+    it("owner creates another new wallet", async function () {
+      const identifier = USER_IDENTIFIER_2;
+      const bytecode = Wallet__factory.bytecode;
+      const walletAddress = getCreate2Address(walletFactory.address, identifier, bytecode);
+
+      await expect(walletFactory.connect(owner).createWallet(identifier))
+        .to.emit(walletFactory, "WalletCreated")
+        .withArgs(identifier, walletAddress, bigNumberify(2));
+      await expect(walletFactory.connect(owner).createWallet(identifier)).to.be.reverted; // WALLET_EXISTS
+      expect(await walletFactory.getWallet(identifier)).to.eq(walletAddress);
+      expect(await walletFactory.allWallets(1)).to.eq(walletAddress);
+      expect(await walletFactory.totalWallets()).to.eq(2);
+
+      const wallet = new Wallet__factory(deployer).attach(walletAddress);
+      expect(await wallet.owner()).to.eq(walletFactory.address);
+
+      await expect(wallet.connect(deployer).initialize(deployerAddress)).to.be.revertedWith(
+        "Initializable: contract is already initialized",
+      );
     });
   });
 });

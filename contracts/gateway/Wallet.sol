@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract Wallet is Initializable, ReentrancyGuardUpgradeable, OwnableUpgradeable {
-    function initialize() public initializer {
-        OwnableUpgradeable.__Ownable_init();
-        ReentrancyGuardUpgradeable.__ReentrancyGuard_init();
+contract Wallet is Initializable, Ownable {
+    function initialize(address owner_) public initializer {
+        transferOwnership(owner_);
     }
 
-    function withdraw() external onlyOwner returns (uint256 amount) {
-        amount = 1;
+    function transfer(
+        address token,
+        address recipient,
+        uint256 amount
+    ) public onlyOwner returns (bool) {
+        return IERC20(token).transfer(recipient, amount);
     }
 }

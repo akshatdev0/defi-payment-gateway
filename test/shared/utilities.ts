@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { BigNumber } from "@ethersproject/bignumber";
-const { getAddress, keccak256, toUtf8Bytes, solidityPack } = ethers.utils;
+const { getAddress, keccak256, toUtf8Bytes, solidityPack, parseEther } = ethers.utils;
 
 export function keccak(n: string): string {
   return keccak256(toUtf8Bytes(n));
@@ -20,3 +20,5 @@ export function getCreate2Address(factoryAddress: string, identifier: string, by
   const sanitizedInputs = `0x${create2Inputs.map(i => i.slice(2)).join("")}`;
   return getAddress(`0x${keccak256(sanitizedInputs).slice(-40)}`);
 }
+
+export { parseEther };

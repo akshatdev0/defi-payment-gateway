@@ -135,6 +135,11 @@ const config: HardhatUserConfig = {
         enabled: true,
         runs: 999999,
       },
+      outputSelection: {
+        "*": {
+          "*": ["storageLayout"],
+        },
+      },
     },
   },
   typechain: {
