@@ -4109,6 +4109,54 @@ __metadata:
   languageName: node
   linkType: hard
 
+"defi-payment-gateway@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "defi-payment-gateway@workspace:."
+  dependencies:
+    "@defi-wonderland/smock": ^2.0.7
+    "@ethersproject/abi": ^5.4.0
+    "@ethersproject/abstract-signer": ^5.4.1
+    "@ethersproject/bignumber": ^5.4.1
+    "@ethersproject/bytes": ^5.4.0
+    "@ethersproject/providers": ^5.4.3
+    "@nomiclabs/hardhat-ethers": ^2.0.2
+    "@nomiclabs/hardhat-waffle": ^2.0.1
+    "@openzeppelin/contracts": ^4.4.1
+    "@openzeppelin/contracts-upgradeable": ^4.4.1
+    "@openzeppelin/hardhat-upgrades": ^1.12.1
+    "@typechain/ethers-v5": ^7.0.1
+    "@typechain/hardhat": ^2.3.0
+    "@types/chai": ^4.2.21
+    "@types/ethereumjs-util": ^6.1.0
+    "@types/fs-extra": ^9.0.12
+    "@types/mocha": ^9.0.0
+    "@types/node": ^16.4.13
+    "@typescript-eslint/eslint-plugin": ^4.29.0
+    "@typescript-eslint/parser": ^4.29.0
+    chai: ^4.3.4
+    cross-env: ^7.0.3
+    dotenv: ^10.0.0
+    eslint: ^7.32.0
+    eslint-config-prettier: ^8.3.0
+    ethereum-waffle: ^3.4.0
+    ethers: ^5.4.4
+    fs-extra: ^10.0.0
+    hardhat: ^2.6.0
+    hardhat-gas-reporter: ^1.0.4
+    lint-staged: ^11.1.2
+    prettier: ^2.3.2
+    prettier-plugin-solidity: ^1.0.0-beta.17
+    shelljs: ^0.8.4
+    solhint: ^3.3.6
+    solhint-plugin-prettier: ^0.0.5
+    solidity-coverage: ^0.7.16
+    ts-generator: ^0.1.1
+    ts-node: ^10.1.0
+    typechain: ^5.1.2
+    typescript: ^4.3.5
+  languageName: unknown
+  linkType: soft
+
 "define-properties@npm:^1.1.2, define-properties@npm:^1.1.3":
   version: 1.1.3
   resolution: "define-properties@npm:1.1.3"
@@ -4431,54 +4479,6 @@ __metadata:
   checksum: 65b5df55a8bab92229ab2b40dad3b387fad24613263d103a97f91c9fe43ceb21965cd3392b1ccb5d77088021e525c4e0481adb309625d0cb94ade1d1fb8dc17e
   languageName: node
   linkType: hard
-
-"erc20-hardhat-starter@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "erc20-hardhat-starter@workspace:."
-  dependencies:
-    "@defi-wonderland/smock": ^2.0.7
-    "@ethersproject/abi": ^5.4.0
-    "@ethersproject/abstract-signer": ^5.4.1
-    "@ethersproject/bignumber": ^5.4.1
-    "@ethersproject/bytes": ^5.4.0
-    "@ethersproject/providers": ^5.4.3
-    "@nomiclabs/hardhat-ethers": ^2.0.2
-    "@nomiclabs/hardhat-waffle": ^2.0.1
-    "@openzeppelin/contracts": ^4.4.1
-    "@openzeppelin/contracts-upgradeable": ^4.4.1
-    "@openzeppelin/hardhat-upgrades": ^1.12.1
-    "@typechain/ethers-v5": ^7.0.1
-    "@typechain/hardhat": ^2.3.0
-    "@types/chai": ^4.2.21
-    "@types/ethereumjs-util": ^6.1.0
-    "@types/fs-extra": ^9.0.12
-    "@types/mocha": ^9.0.0
-    "@types/node": ^16.4.13
-    "@typescript-eslint/eslint-plugin": ^4.29.0
-    "@typescript-eslint/parser": ^4.29.0
-    chai: ^4.3.4
-    cross-env: ^7.0.3
-    dotenv: ^10.0.0
-    eslint: ^7.32.0
-    eslint-config-prettier: ^8.3.0
-    ethereum-waffle: ^3.4.0
-    ethers: ^5.4.4
-    fs-extra: ^10.0.0
-    hardhat: ^2.6.0
-    hardhat-gas-reporter: ^1.0.4
-    lint-staged: ^11.1.2
-    prettier: ^2.3.2
-    prettier-plugin-solidity: ^1.0.0-beta.17
-    shelljs: ^0.8.4
-    solhint: ^3.3.6
-    solhint-plugin-prettier: ^0.0.5
-    solidity-coverage: ^0.7.16
-    ts-generator: ^0.1.1
-    ts-node: ^10.1.0
-    typechain: ^5.1.2
-    typescript: ^4.3.5
-  languageName: unknown
-  linkType: soft
 
 "err-code@npm:^2.0.2":
   version: 2.0.3

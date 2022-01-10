@@ -1,6 +1,6 @@
 {
-  "name": "erc20-hardhat-starter",
-  "description": "ERC20 Hardhat Starter",
+  "name": "defi-payment-gateway",
+  "description": "DeFi Payment Gateway",
   "version": "1.0.0",
   "author": "Anonymous",
   "devDependencies": {
