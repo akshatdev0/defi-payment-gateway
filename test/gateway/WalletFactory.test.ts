@@ -1,9 +1,9 @@
 import { ethers, upgrades } from "hardhat";
 import { Signer } from "ethers";
 import chai, { expect } from "chai";
-import { smock } from "@defi-wonderland/smock";
+import { FakeContract, smock } from "@defi-wonderland/smock";
 
-import { WalletFactory, WalletFactory__factory, Wallet__factory } from "../../types";
+import { USD, USD__factory, WalletFactory, WalletFactory__factory, Wallet__factory } from "../../types";
 import { keccak, bigNumberify, getCreate2Address } from "../shared/utilities";
 
 chai.use(smock.matchers);
@@ -38,30 +38,38 @@ describe("WalletFactory Unit Tests", function () {
   });
 
   describe("initialization", () => {
-    it("can be initialized and deployed", async () => {
-      const walletFactory__factory = await new WalletFactory__factory(deployer);
+    it("can be deployed and initialized only once", async () => {
+      const walletFactory__factory = new WalletFactory__factory(deployer);
       walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
         ownerAddress,
         treasuryAddress,
       ])) as WalletFactory;
       await walletFactory.deployed();
+
+      await expect(walletFactory.connect(deployer).initialize(ownerAddress, treasuryAddress)).to.be.revertedWith(
+        "Initializable: contract is already initialized",
+      );
     });
 
     it("will not allow a 0x0 Owner address", async () => {
-      const walletFactory__factory = await new WalletFactory__factory(deployer);
-      await expect(upgrades.deployProxy(walletFactory__factory, [ZERO_ADDRESS, treasuryAddress])).to.be.reverted;
+      const walletFactory__factory = new WalletFactory__factory(deployer);
+      await expect(upgrades.deployProxy(walletFactory__factory, [ZERO_ADDRESS, treasuryAddress])).to.be.revertedWith(
+        "WalletFactory: new owner is the zero address",
+      );
     });
 
     it("will not allow a 0x0 Treasury address", async () => {
-      const walletFactory__factory = await new WalletFactory__factory(deployer);
-      await expect(upgrades.deployProxy(walletFactory__factory, [ownerAddress, ZERO_ADDRESS])).to.be.reverted;
+      const walletFactory__factory = new WalletFactory__factory(deployer);
+      await expect(upgrades.deployProxy(walletFactory__factory, [ownerAddress, ZERO_ADDRESS])).to.be.revertedWith(
+        "WalletFactory: new treasury is the zero address",
+      );
     });
   });
 
   describe("post-initialization", function () {
     describe("validations", function () {
       before(async function () {
-        const walletFactory__factory = await new WalletFactory__factory(deployer);
+        const walletFactory__factory = new WalletFactory__factory(deployer);
         walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
           ownerAddress,
           treasuryAddress,
@@ -76,7 +84,7 @@ describe("WalletFactory Unit Tests", function () {
 
     describe("create wallet", function () {
       before(async function () {
-        const walletFactory__factory = await new WalletFactory__factory(deployer);
+        const walletFactory__factory = new WalletFactory__factory(deployer);
         walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
           ownerAddress,
           treasuryAddress,
@@ -135,7 +143,7 @@ describe("WalletFactory Unit Tests", function () {
 
     describe("transfer ownership", function () {
       beforeEach(async function () {
-        const walletFactory__factory = await new WalletFactory__factory(deployer);
+        const walletFactory__factory = new WalletFactory__factory(deployer);
         walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
           ownerAddress,
           treasuryAddress,
@@ -168,7 +176,7 @@ describe("WalletFactory Unit Tests", function () {
 
     describe("update treasury", function () {
       beforeEach(async function () {
-        const walletFactory__factory = await new WalletFactory__factory(deployer);
+        const walletFactory__factory = new WalletFactory__factory(deployer);
         walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
           ownerAddress,
           treasuryAddress,
@@ -200,21 +208,26 @@ describe("WalletFactory Unit Tests", function () {
     });
 
     describe("transfer from", function () {
+      let usdFake: FakeContract<USD>;
+
       beforeEach(async function () {
-        const walletFactory__factory = await new WalletFactory__factory(deployer);
+        const walletFactory__factory = new WalletFactory__factory(deployer);
         walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
           ownerAddress,
           treasuryAddress,
         ])) as WalletFactory;
         await walletFactory.deployed();
+
+        const usd__factory = new USD__factory(deployer);
+        usdFake = await smock.fake(usd__factory);
       });
 
       it("prevents non-owners from transferring", async function () {
         const identifier = USER_IDENTIFIER_1;
-        await expect(walletFactory.connect(deployer).transferFrom(identifier, otherAddress, _1_000)).to.be.revertedWith(
-          "Ownable: caller is not the owner",
-        );
-        await expect(walletFactory.connect(other).transferFrom(identifier, otherAddress, _1_000)).to.be.revertedWith(
+        await expect(
+          walletFactory.connect(deployer).transferFrom(identifier, usdFake.address, _1_000),
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+        await expect(walletFactory.connect(other).transferFrom(identifier, usdFake.address, _1_000)).to.be.revertedWith(
           "Ownable: caller is not the owner",
         );
       });
