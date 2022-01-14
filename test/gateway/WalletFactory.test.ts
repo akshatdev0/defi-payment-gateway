@@ -6,6 +6,8 @@ import { FakeContract, smock } from "@defi-wonderland/smock";
 import { USD, USD__factory, WalletFactory, WalletFactory__factory, Wallet__factory } from "../../types";
 import { keccak, bigNumberify, getCreate2Address } from "../shared/utilities";
 
+const { keccak256 } = ethers.utils;
+
 chai.use(smock.matchers);
 
 describe("WalletFactory Unit Tests", function () {
@@ -26,6 +28,7 @@ describe("WalletFactory Unit Tests", function () {
   const USER_IDENTIFIER_1 = keccak("1");
   const USER_IDENTIFIER_2 = keccak("2");
   const _1_000 = bigNumberify("1000000000");
+  const INIT_CODE_HASH = "0xfdbbbcabc98349537b2b90f63f6d86ea9bd47e72d9cf29825547d4b2fb2d67c4";
 
   before(async function () {
     [deployer, owner, treasury, other] = await ethers.getSigners();
@@ -68,7 +71,7 @@ describe("WalletFactory Unit Tests", function () {
 
   describe("post-initialization", function () {
     describe("validations", function () {
-      before(async function () {
+      beforeEach(async function () {
         const walletFactory__factory = new WalletFactory__factory(deployer);
         walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
           ownerAddress,
@@ -79,6 +82,43 @@ describe("WalletFactory Unit Tests", function () {
 
       it("has an owner", async function () {
         expect(await walletFactory.owner()).to.equal(ownerAddress);
+      });
+
+      describe("create2", () => {
+        it("generates correct addresses", async () => {
+          const bytecode = Wallet__factory.bytecode;
+          const initCodeHash = keccak256(bytecode);
+          let generatedAddress: string;
+
+          const log = (sender: string, salt: string, initCodeHash: string, generatedAddress: string) => {
+            console.log("");
+            console.log("Inputs:");
+            console.log(`- sender            : ${sender}`);
+            console.log(`- salt              : ${salt}`);
+            console.log(`- init_code_hash    : ${initCodeHash}`);
+            console.log("Outputs:");
+            console.log(`- generated_address : ${generatedAddress}`);
+            console.log("");
+          };
+
+          expect(initCodeHash).to.be.equal(INIT_CODE_HASH);
+
+          generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
+          expect(generatedAddress).to.be.equal("0x6B8625F42E973261b254076E58e1F6b0CBD67FE5");
+          log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
+
+          generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
+          expect(generatedAddress).to.be.equal("0x764DA0b33f199F5BF5D56C32928A6f950A5CAec1");
+          log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
+
+          generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
+          expect(generatedAddress).to.be.equal("0xb4e6d296B796eAd0aB7c41B5b6c62A529d2AFb30");
+          log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
+
+          generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_2, bytecode);
+          expect(generatedAddress).to.be.equal("0x3E9C7B625B9F9a051043D201F6454e83876ddA79");
+          log(deployerAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
+        });
       });
     });
 

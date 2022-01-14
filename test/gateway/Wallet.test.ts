@@ -104,7 +104,6 @@ describe("Wallet Unit Tests", function () {
       });
 
       it("can only be called by owner", async function () {
-        usdFake.transfer.returns(true);
         await expect(wallet.connect(owner).transfer(usdFake.address, otherAddress, _1_000)).to.not.be.reverted;
       });
     });

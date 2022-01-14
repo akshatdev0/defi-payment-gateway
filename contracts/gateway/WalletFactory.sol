@@ -30,8 +30,7 @@ contract WalletFactory is Initializable, ReentrancyGuardUpgradeable, OwnableUpgr
     }
 
     function createWallet(bytes32 identifier) external onlyOwner {
-        bytes32 salt = keccak256(abi.encodePacked(identifier));
-        Wallet wallet = new Wallet{ salt: salt }();
+        Wallet wallet = new Wallet{ salt: identifier }();
         wallet.initialize(address(this));
         address walletAddress = address(wallet);
         getWallet[identifier] = walletAddress;
