@@ -28,7 +28,7 @@ describe("WalletFactory Unit Tests", function () {
   const USER_IDENTIFIER_1 = keccak("1");
   const USER_IDENTIFIER_2 = keccak("2");
   const _1_000 = bigNumberify("1000000000");
-  const INIT_CODE_HASH = "0xfdbbbcabc98349537b2b90f63f6d86ea9bd47e72d9cf29825547d4b2fb2d67c4";
+  const INIT_CODE_HASH = "0x6d22c8c373928be47884426b36a984fd26f20cc640cd7106a3f37f5eb42a8b03";
 
   before(async function () {
     [deployer, owner, treasury, other] = await ethers.getSigners();
@@ -105,19 +105,19 @@ describe("WalletFactory Unit Tests", function () {
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x6B8625F42E973261b254076E58e1F6b0CBD67FE5");
+          expect(generatedAddress).to.be.equal("0x850D9519318c365b1D43e033F9E92Ec9ec7E7cb2");
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x764DA0b33f199F5BF5D56C32928A6f950A5CAec1");
+          expect(generatedAddress).to.be.equal("0x95386BFfe6254e9Cf07CFDe0c4f1D7fd27Dd31c5");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
           log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0xb4e6d296B796eAd0aB7c41B5b6c62A529d2AFb30");
+          expect(generatedAddress).to.be.equal("0x07db1204F4848Aef6794cC872039F12f57EcF52a");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_2, bytecode);
           log(deployerAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x3E9C7B625B9F9a051043D201F6454e83876ddA79");
+          expect(generatedAddress).to.be.equal("0x91b205007E30E6023D508f883B1D91588a2B57dB");
         });
       });
     });
