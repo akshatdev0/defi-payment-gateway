@@ -1,6 +1,7 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@openzeppelin/hardhat-upgrades";
+import "hardhat-deploy";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "hardhat-abi-exporter";
@@ -9,7 +10,6 @@ import "solidity-coverage";
 
 import "./tasks/accounts";
 import "./tasks/clean";
-import "./tasks/deployers";
 
 import { resolve } from "path";
 
@@ -121,6 +121,8 @@ const config: HardhatUserConfig = {
     cache: "./cache",
     sources: "./contracts",
     tests: "./test",
+    deploy: "./scripts/deploy",
+    deployments: "./deployments",
   },
   solidity: {
     version: "0.8.3",
@@ -142,6 +144,17 @@ const config: HardhatUserConfig = {
           "*": ["storageLayout"],
         },
       },
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    owner: {
+      default: process.env.OWNER || 1,
+    },
+    treasury: {
+      default: process.env.TREASURY || 2,
     },
   },
   typechain: {

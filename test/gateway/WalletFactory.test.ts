@@ -104,20 +104,20 @@ describe("WalletFactory Unit Tests", function () {
           expect(initCodeHash).to.be.equal(INIT_CODE_HASH);
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
-          expect(generatedAddress).to.be.equal("0x6B8625F42E973261b254076E58e1F6b0CBD67FE5");
           log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
+          expect(generatedAddress).to.be.equal("0x6B8625F42E973261b254076E58e1F6b0CBD67FE5");
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
-          expect(generatedAddress).to.be.equal("0x764DA0b33f199F5BF5D56C32928A6f950A5CAec1");
           log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
+          expect(generatedAddress).to.be.equal("0x764DA0b33f199F5BF5D56C32928A6f950A5CAec1");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
-          expect(generatedAddress).to.be.equal("0xb4e6d296B796eAd0aB7c41B5b6c62A529d2AFb30");
           log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
+          expect(generatedAddress).to.be.equal("0xb4e6d296B796eAd0aB7c41B5b6c62A529d2AFb30");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_2, bytecode);
-          expect(generatedAddress).to.be.equal("0x3E9C7B625B9F9a051043D201F6454e83876ddA79");
           log(deployerAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
+          expect(generatedAddress).to.be.equal("0x3E9C7B625B9F9a051043D201F6454e83876ddA79");
         });
       });
     });
