@@ -86,6 +86,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.1",
-    "@openzeppelin/contracts-upgradeable": "^4.4.1"
+    "@openzeppelin/contracts-upgradeable": "^4.4.1",
+    "tronbox": "^2.7.25"
   }
 }
