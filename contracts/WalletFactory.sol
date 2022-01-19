@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./Wallet.sol";
 
-contract WalletFactory is Initializable, AccessControlUpgradeable {
+contract WalletFactory is AccessControl {
     bytes32 public constant APP_ROLE = keccak256("APP_ROLE");
 
     address public treasury;
@@ -14,15 +13,14 @@ contract WalletFactory is Initializable, AccessControlUpgradeable {
     event WalletCreated(bytes32 identifier, address indexed walletAddress);
     event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
 
-    function initialize(
+    constructor(
         address admin_,
         address app_,
         address treasury_
-    ) public initializer {
+    ) {
         require(admin_ != address(0), "WalletFactory: new admin is the zero address");
         require(app_ != address(0), "WalletFactory: new app is the zero address");
         require(treasury_ != address(0), "WalletFactory: new treasury is the zero address");
-        AccessControlUpgradeable.__AccessControl_init();
         _grantRole(DEFAULT_ADMIN_ROLE, admin_);
         _grantRole(APP_ROLE, app_);
         treasury = treasury_;

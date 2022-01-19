@@ -1,4 +1,4 @@
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import { Signer } from "ethers";
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
@@ -34,7 +34,7 @@ describe("WalletFactory Unit Tests", function () {
   const USER_IDENTIFIER_1 = keccak("1");
   const USER_IDENTIFIER_2 = keccak("2");
   const _1_000 = bigNumberify("1000000000");
-  const INIT_CODE_HASH = "0x66bf8b2aac6ff77c9171f40ae8973c96fc5131e0f406203790ecd10d4f14e3bc";
+  const INIT_CODE_HASH = "0x366764af37ccb070dc8f8ef40f6db1bd7e11c94437d7d8f7d018f35db4e40692";
 
   before(async function () {
     [deployer, admin, app, treasury, other, authorized] = await ethers.getSigners();
@@ -49,51 +49,37 @@ describe("WalletFactory Unit Tests", function () {
   });
 
   describe("initialization", () => {
-    it("can be deployed and initialized only once", async () => {
-      const walletFactory__factory = new WalletFactory__factory(deployer);
-      walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-        adminAddress,
-        appAddress,
-        treasuryAddress,
-      ])) as WalletFactory;
+    it("can be deployed", async () => {
+      walletFactory = await new WalletFactory__factory(deployer).deploy(adminAddress, appAddress, treasuryAddress);
       await walletFactory.deployed();
-
-      await expect(
-        walletFactory.connect(deployer).initialize(adminAddress, appAddress, treasuryAddress),
-      ).to.be.revertedWith("Initializable: contract is already initialized");
     });
 
     it("will not allow a 0x0 admin address", async () => {
       const walletFactory__factory = new WalletFactory__factory(deployer);
-      await expect(
-        upgrades.deployProxy(walletFactory__factory, [ZERO_ADDRESS, appAddress, treasuryAddress]),
-      ).to.be.revertedWith("WalletFactory: new admin is the zero address");
+      await expect(walletFactory__factory.deploy(ZERO_ADDRESS, appAddress, treasuryAddress)).to.be.revertedWith(
+        "WalletFactory: new admin is the zero address",
+      );
     });
 
     it("will not allow a 0x0 app address", async () => {
       const walletFactory__factory = new WalletFactory__factory(deployer);
-      await expect(
-        upgrades.deployProxy(walletFactory__factory, [adminAddress, ZERO_ADDRESS, treasuryAddress]),
-      ).to.be.revertedWith("WalletFactory: new app is the zero address");
+      await expect(walletFactory__factory.deploy(adminAddress, ZERO_ADDRESS, treasuryAddress)).to.be.revertedWith(
+        "WalletFactory: new app is the zero address",
+      );
     });
 
     it("will not allow a 0x0 Treasury address", async () => {
       const walletFactory__factory = new WalletFactory__factory(deployer);
-      await expect(
-        upgrades.deployProxy(walletFactory__factory, [adminAddress, appAddress, ZERO_ADDRESS]),
-      ).to.be.revertedWith("WalletFactory: new treasury is the zero address");
+      await expect(walletFactory__factory.deploy(adminAddress, appAddress, ZERO_ADDRESS)).to.be.revertedWith(
+        "WalletFactory: new treasury is the zero address",
+      );
     });
   });
 
   describe("post-initialization", function () {
     describe("validations", function () {
       beforeEach(async function () {
-        const walletFactory__factory = new WalletFactory__factory(deployer);
-        walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-          adminAddress,
-          appAddress,
-          treasuryAddress,
-        ])) as WalletFactory;
+        walletFactory = await new WalletFactory__factory(deployer).deploy(adminAddress, appAddress, treasuryAddress);
         await walletFactory.deployed();
       });
 
@@ -126,31 +112,26 @@ describe("WalletFactory Unit Tests", function () {
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x51292b1bFd7C88324aF4eB3e5844d954Fb4C76eb");
+          expect(generatedAddress).to.be.equal("0x9fd24A76D24743FC76C123acecc7Cc2FDa27EC00");
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x7a958AA32Da4b994eef54C573dC3E898C7F2e6c5");
+          expect(generatedAddress).to.be.equal("0x93CAEdd30588E88585ef36871b2D09dC8699456B");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
           log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0xdAd14fC4e099D44293443d6329fbC6Bb67F04e20");
+          expect(generatedAddress).to.be.equal("0x18d131B27F9Aa56AC30846aD77d1E806A7203498");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_2, bytecode);
           log(deployerAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x1c04c1e428960Ea9279a2cDd85A5F9822973f65E");
+          expect(generatedAddress).to.be.equal("0x8A69Ad2DdB00c3Bc5E9e85Da72927548B2F6905B");
         });
       });
     });
 
     describe("access control", function () {
       beforeEach(async function () {
-        const walletFactory__factory = new WalletFactory__factory(deployer);
-        walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-          adminAddress,
-          appAddress,
-          treasuryAddress,
-        ])) as WalletFactory;
+        walletFactory = await new WalletFactory__factory(deployer).deploy(adminAddress, appAddress, treasuryAddress);
         await walletFactory.deployed();
       });
 
@@ -195,12 +176,7 @@ describe("WalletFactory Unit Tests", function () {
 
     describe("create wallet", function () {
       before(async function () {
-        const walletFactory__factory = new WalletFactory__factory(deployer);
-        walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-          adminAddress,
-          appAddress,
-          treasuryAddress,
-        ])) as WalletFactory;
+        walletFactory = await new WalletFactory__factory(deployer).deploy(adminAddress, appAddress, treasuryAddress);
         await walletFactory.deployed();
       });
 
@@ -249,12 +225,7 @@ describe("WalletFactory Unit Tests", function () {
 
     describe("update treasury", function () {
       beforeEach(async function () {
-        const walletFactory__factory = new WalletFactory__factory(deployer);
-        walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-          adminAddress,
-          appAddress,
-          treasuryAddress,
-        ])) as WalletFactory;
+        walletFactory = await new WalletFactory__factory(deployer).deploy(adminAddress, appAddress, treasuryAddress);
         await walletFactory.deployed();
       });
 
@@ -294,12 +265,7 @@ describe("WalletFactory Unit Tests", function () {
       let usdFake: FakeContract<USD>;
 
       beforeEach(async function () {
-        const walletFactory__factory = new WalletFactory__factory(deployer);
-        walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-          adminAddress,
-          appAddress,
-          treasuryAddress,
-        ])) as WalletFactory;
+        walletFactory = await new WalletFactory__factory(deployer).deploy(adminAddress, appAddress, treasuryAddress);
         await walletFactory.deployed();
 
         const usd__factory = new USD__factory(deployer);

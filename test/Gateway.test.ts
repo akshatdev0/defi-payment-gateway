@@ -1,4 +1,4 @@
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import { Signer } from "ethers";
 import chai, { expect } from "chai";
 import { MockContract, smock } from "@defi-wonderland/smock";
@@ -60,12 +60,7 @@ describe("Gateway Tests", function () {
 
   beforeEach(async function () {
     // Deploy WalletFactory
-    const walletFactory__factory = await new WalletFactory__factory(deployer);
-    walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-      adminAddress,
-      appAddress,
-      treasuryAddress,
-    ])) as WalletFactory;
+    walletFactory = await new WalletFactory__factory(deployer).deploy(adminAddress, appAddress, treasuryAddress);
     await walletFactory.deployed();
 
     // Deploy USD Token
