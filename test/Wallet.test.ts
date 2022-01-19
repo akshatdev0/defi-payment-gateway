@@ -3,8 +3,8 @@ import { Signer } from "ethers";
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 
-import { USD, USD__factory, Wallet, Wallet__factory } from "../../types";
-import { bigNumberify } from "../shared/utilities";
+import { USD, USD__factory, Wallet, Wallet__factory } from "../types";
+import { bigNumberify } from "./shared/utilities";
 
 chai.use(smock.matchers);
 

@@ -3,8 +3,8 @@ import { Signer } from "ethers";
 import chai, { expect } from "chai";
 import { FakeContract, smock } from "@defi-wonderland/smock";
 
-import { USD, USD__factory, WalletFactory, WalletFactory__factory, Wallet__factory } from "../../types";
-import { keccak, bigNumberify, getCreate2Address } from "../shared/utilities";
+import { USD, USD__factory, WalletFactory, WalletFactory__factory, Wallet__factory } from "../types";
+import { keccak, bigNumberify, getCreate2Address } from "./shared/utilities";
 
 const { keccak256 } = ethers.utils;
 
@@ -28,7 +28,7 @@ describe("WalletFactory Unit Tests", function () {
   const USER_IDENTIFIER_1 = keccak("1");
   const USER_IDENTIFIER_2 = keccak("2");
   const _1_000 = bigNumberify("1000000000");
-  const INIT_CODE_HASH = "0x6d22c8c373928be47884426b36a984fd26f20cc640cd7106a3f37f5eb42a8b03";
+  const INIT_CODE_HASH = "0xc703de4345d8215b3764ba867a4b20a548f22e73a32d4860d82f22344728e742";
 
   before(async function () {
     [deployer, owner, treasury, other] = await ethers.getSigners();
@@ -105,19 +105,19 @@ describe("WalletFactory Unit Tests", function () {
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x850D9519318c365b1D43e033F9E92Ec9ec7E7cb2");
+          expect(generatedAddress).to.be.equal("0xa728dC290D624abc8125deB7240A338A0018d2a4");
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x95386BFfe6254e9Cf07CFDe0c4f1D7fd27Dd31c5");
+          expect(generatedAddress).to.be.equal("0xa9B3c2c2E76a31e8734013BE317e4fFd74a8ab0D");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
           log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x07db1204F4848Aef6794cC872039F12f57EcF52a");
+          expect(generatedAddress).to.be.equal("0x50C2Dea4523934ee6D76aA804e850F202ba3eb49");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_2, bytecode);
           log(deployerAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x91b205007E30E6023D508f883B1D91588a2B57dB");
+          expect(generatedAddress).to.be.equal("0x56d359214d666c06d1fDEA623A88cD199C54B8eE");
         });
       });
     });
