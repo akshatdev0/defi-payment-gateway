@@ -1,21 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./Wallet.sol";
 
-contract WalletFactory is Initializable, OwnableUpgradeable {
+contract WalletFactory is Ownable {
     address public treasury;
 
     event WalletCreated(bytes32 identifier, address indexed walletAddress);
     event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
 
-    function initialize(address owner_, address treasury_) public initializer {
+    constructor(address owner_, address treasury_) {
         require(owner_ != address(0), "WalletFactory: new owner is the zero address");
         require(treasury_ != address(0), "WalletFactory: new treasury is the zero address");
-        OwnableUpgradeable.__Ownable_init();
         _transferOwnership(owner_);
         _updateTreasury(treasury_);
     }
