@@ -4624,6 +4624,7 @@ __metadata:
     solhint-plugin-prettier: ^0.0.5
     solidity-coverage: ^0.7.16
     tronbox: ^2.7.25
+    tronweb: ^4.1.0
     ts-generator: ^0.1.1
     ts-node: ^10.1.0
     typechain: ^5.1.2
@@ -14257,7 +14258,7 @@ resolve@1.17.0:
   languageName: node
   linkType: hard
 
-"tronweb@npm:^4.0.1":
+"tronweb@npm:^4.0.1, tronweb@npm:^4.1.0":
   version: 4.1.0
   resolution: "tronweb@npm:4.1.0"
   dependencies:
