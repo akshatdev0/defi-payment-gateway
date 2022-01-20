@@ -28,7 +28,7 @@ describe("WalletFactory Unit Tests", function () {
   const USER_IDENTIFIER_1 = keccak("1");
   const USER_IDENTIFIER_2 = keccak("2");
   const _1_000 = bigNumberify("1000000000");
-  const INIT_CODE_HASH = "0xc703de4345d8215b3764ba867a4b20a548f22e73a32d4860d82f22344728e742";
+  const INIT_CODE_HASH = "0x79b8071417ed7109c7e1d6474ccec39a75b4578c3a526aedd173f5536b17d0ea";
 
   before(async function () {
     [deployer, owner, treasury, other] = await ethers.getSigners();
@@ -105,19 +105,19 @@ describe("WalletFactory Unit Tests", function () {
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0xa728dC290D624abc8125deB7240A338A0018d2a4");
+          expect(generatedAddress).to.be.equal("0xD20Cbc95BDab4c016E71317D23065B6b17bEcab3");
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0xa9B3c2c2E76a31e8734013BE317e4fFd74a8ab0D");
+          expect(generatedAddress).to.be.equal("0x82348545F7944ac0B0Ff74104aFc6B7a290E72d2");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
           log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x50C2Dea4523934ee6D76aA804e850F202ba3eb49");
+          expect(generatedAddress).to.be.equal("0xe556F081634891b401b7Fe34bD1624E72AcE7BE8");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_2, bytecode);
           log(deployerAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x56d359214d666c06d1fDEA623A88cD199C54B8eE");
+          expect(generatedAddress).to.be.equal("0xc93Aa68747e99EB93f329083E55efA1C7A78142f");
         });
       });
     });
@@ -145,11 +145,8 @@ describe("WalletFactory Unit Tests", function () {
 
         await expect(walletFactory.connect(owner).createWallet(identifier))
           .to.emit(walletFactory, "WalletCreated")
-          .withArgs(identifier, walletAddress, bigNumberify(1));
+          .withArgs(identifier, walletAddress);
         await expect(walletFactory.connect(owner).createWallet(identifier)).to.be.reverted; // WALLET_EXISTS
-        expect(await walletFactory.getWallet(identifier)).to.eq(walletAddress);
-        expect(await walletFactory.allWallets(0)).to.eq(walletAddress);
-        expect(await walletFactory.totalWallets()).to.eq(1);
 
         const wallet = new Wallet__factory(deployer).attach(walletAddress);
         expect(await wallet.owner()).to.eq(walletFactory.address);
@@ -166,11 +163,8 @@ describe("WalletFactory Unit Tests", function () {
 
         await expect(walletFactory.connect(owner).createWallet(identifier))
           .to.emit(walletFactory, "WalletCreated")
-          .withArgs(identifier, walletAddress, bigNumberify(2));
+          .withArgs(identifier, walletAddress);
         await expect(walletFactory.connect(owner).createWallet(identifier)).to.be.reverted; // WALLET_EXISTS
-        expect(await walletFactory.getWallet(identifier)).to.eq(walletAddress);
-        expect(await walletFactory.allWallets(1)).to.eq(walletAddress);
-        expect(await walletFactory.totalWallets()).to.eq(2);
 
         const wallet = new Wallet__factory(deployer).attach(walletAddress);
         expect(await wallet.owner()).to.eq(walletFactory.address);
@@ -264,12 +258,14 @@ describe("WalletFactory Unit Tests", function () {
 
       it("prevents non-owners from transferring", async function () {
         const identifier = USER_IDENTIFIER_1;
+        const bytecode = Wallet__factory.bytecode;
+        const walletAddress = getCreate2Address(walletFactory.address, identifier, bytecode);
         await expect(
-          walletFactory.connect(deployer).transferFrom(identifier, usdFake.address, _1_000),
+          walletFactory.connect(deployer).transferFrom(walletAddress, usdFake.address, _1_000),
         ).to.be.revertedWith("Ownable: caller is not the owner");
-        await expect(walletFactory.connect(other).transferFrom(identifier, usdFake.address, _1_000)).to.be.revertedWith(
-          "Ownable: caller is not the owner",
-        );
+        await expect(
+          walletFactory.connect(other).transferFrom(walletAddress, usdFake.address, _1_000),
+        ).to.be.revertedWith("Ownable: caller is not the owner");
       });
     });
   });

@@ -3,49 +3,35 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 import "./Wallet.sol";
 
-contract WalletFactory is Initializable, ReentrancyGuardUpgradeable, OwnableUpgradeable {
-    mapping(bytes32 => address) public getWallet;
-    mapping(address => bytes32) public getIdentifier;
-    address[] public allWallets;
+contract WalletFactory is Initializable, OwnableUpgradeable {
     address public treasury;
 
-    event WalletCreated(bytes32 identifier, address indexed walletAddress, uint256);
+    event WalletCreated(bytes32 identifier, address indexed walletAddress);
     event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
 
     function initialize(address owner_, address treasury_) public initializer {
         require(owner_ != address(0), "WalletFactory: new owner is the zero address");
         require(treasury_ != address(0), "WalletFactory: new treasury is the zero address");
         OwnableUpgradeable.__Ownable_init();
-        ReentrancyGuardUpgradeable.__ReentrancyGuard_init();
         _transferOwnership(owner_);
         _updateTreasury(treasury_);
-    }
-
-    function totalWallets() external view returns (uint256) {
-        return allWallets.length;
     }
 
     function createWallet(bytes32 identifier) external onlyOwner {
         Wallet wallet = new Wallet{ salt: identifier }();
         wallet.initialize(address(this));
-        address walletAddress = address(wallet);
-        getWallet[identifier] = walletAddress;
-        getIdentifier[walletAddress] = identifier;
-        allWallets.push(walletAddress);
-        emit WalletCreated(identifier, walletAddress, allWallets.length);
+        emit WalletCreated(identifier, address(wallet));
     }
 
     function transferFrom(
-        bytes32 identifier,
+        address wallet,
         address token,
         uint256 amount
-    ) external onlyOwner {
-        Wallet wallet = Wallet(getWallet[identifier]);
-        wallet.transfer(token, treasury, amount);
+    ) external onlyOwner returns (bool) {
+        return Wallet(wallet).transfer(token, treasury, amount);
     }
 
     function updateTreasury(address newTreasury) public virtual onlyOwner {

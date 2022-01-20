@@ -44,7 +44,7 @@ describe("Wallet Unit Tests", function () {
       await wallet.deployed();
 
       await expect(wallet.connect(deployer).initialize(ZERO_ADDRESS)).to.be.revertedWith(
-        "Ownable: new owner is the zero address",
+        "Wallet: new owner is the zero address",
       );
     });
   });

@@ -89,49 +89,49 @@ describe("Gateway Tests", function () {
     it("bob deposits 5000 USD tokens", async function () {
       const identifier = BOB_IDENTIFIER;
       const bytecode = Wallet__factory.bytecode;
-      const walletAddress = getCreate2Address(walletFactory.address, identifier, bytecode);
+      const bobWallet = getCreate2Address(walletFactory.address, identifier, bytecode);
 
       // Balances
       expect(await usdMock.balanceOf(bobAddress)).to.equal(_200_000);
       expect(await usdMock.balanceOf(treasuryAddress)).to.equal(_0);
-      expect(await usdMock.balanceOf(walletAddress)).to.equal(_0);
+      expect(await usdMock.balanceOf(bobWallet)).to.equal(_0);
 
       // Bob sends USD 5000 tokens to a pre-deterministic smart-contract wallet address
-      await expect(usdMock.connect(bob).transfer(walletAddress, _5_000))
+      await expect(usdMock.connect(bob).transfer(bobWallet, _5_000))
         .to.emit(usdMock, "Transfer")
-        .withArgs(bobAddress, walletAddress, _5_000);
+        .withArgs(bobAddress, bobWallet, _5_000);
       expect(await usdMock.balanceOf(bobAddress)).to.equal(_200_000.sub(_5_000));
-      expect(await usdMock.balanceOf(walletAddress)).to.equal(_5_000);
+      expect(await usdMock.balanceOf(bobWallet)).to.equal(_5_000);
 
       // After detecting deposit, owner creates smart-wallet for Bob at the pre-determined address
       await expect(walletFactory.connect(owner).createWallet(identifier))
         .to.emit(walletFactory, "WalletCreated")
-        .withArgs(identifier, walletAddress, bigNumberify(1));
+        .withArgs(identifier, bobWallet);
 
       // Owner fails to transfer amount exceeding balance from Bob's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(identifier, usdMock.address, _5_001)).to.be.revertedWith(
+      await expect(walletFactory.connect(owner).transferFrom(bobWallet, usdMock.address, _5_001)).to.be.revertedWith(
         "ERC20: transfer amount exceeds balance",
       );
 
       // Owner can transfer less amount from Bob's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(identifier, usdMock.address, _3_000))
+      await expect(walletFactory.connect(owner).transferFrom(bobWallet, usdMock.address, _3_000))
         .to.emit(usdMock, "Transfer")
-        .withArgs(walletAddress, treasuryAddress, _3_000);
+        .withArgs(bobWallet, treasuryAddress, _3_000);
 
       // Balances
       expect(await usdMock.balanceOf(bobAddress)).to.equal(_200_000.sub(_5_000));
       expect(await usdMock.balanceOf(treasuryAddress)).to.equal(_3_000);
-      expect(await usdMock.balanceOf(walletAddress)).to.equal(_2_000);
+      expect(await usdMock.balanceOf(bobWallet)).to.equal(_2_000);
 
       // Owner transfers whole amount from Bob's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(identifier, usdMock.address, _2_000))
+      await expect(walletFactory.connect(owner).transferFrom(bobWallet, usdMock.address, _2_000))
         .to.emit(usdMock, "Transfer")
-        .withArgs(walletAddress, treasuryAddress, _2_000);
+        .withArgs(bobWallet, treasuryAddress, _2_000);
 
       // Final Balances
       expect(await usdMock.balanceOf(bobAddress)).to.equal(_200_000.sub(_5_000));
       expect(await usdMock.balanceOf(treasuryAddress)).to.equal(_5_000);
-      expect(await usdMock.balanceOf(walletAddress)).to.equal(_0);
+      expect(await usdMock.balanceOf(bobWallet)).to.equal(_0);
     });
 
     it("alice & eve deposit USD tokens", async function () {
@@ -166,15 +166,15 @@ describe("Gateway Tests", function () {
       // After detecting Alice's deposit, owner creates smart-wallet for Alice at the pre-determined address
       await expect(walletFactory.connect(owner).createWallet(ALICE_IDENTIFIER))
         .to.emit(walletFactory, "WalletCreated")
-        .withArgs(ALICE_IDENTIFIER, aliceWallet, bigNumberify(1));
+        .withArgs(ALICE_IDENTIFIER, aliceWallet);
 
       // After detecting Eve's deposit, owner creates smart-wallet for Eve at the pre-determined address
       await expect(walletFactory.connect(owner).createWallet(EVE_IDENTIFIER))
         .to.emit(walletFactory, "WalletCreated")
-        .withArgs(EVE_IDENTIFIER, eveWallet, bigNumberify(2));
+        .withArgs(EVE_IDENTIFIER, eveWallet);
 
       // Owner transfers funds from Alice's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(ALICE_IDENTIFIER, usdMock.address, _3_000))
+      await expect(walletFactory.connect(owner).transferFrom(aliceWallet, usdMock.address, _3_000))
         .to.emit(usdMock, "Transfer")
         .withArgs(aliceWallet, treasuryAddress, _3_000);
 
@@ -184,7 +184,7 @@ describe("Gateway Tests", function () {
       expect(await usdMock.balanceOf(aliceWallet)).to.equal(_0);
 
       // Owner transfers funds from Eve's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(EVE_IDENTIFIER, usdMock.address, _1_000))
+      await expect(walletFactory.connect(owner).transferFrom(eveWallet, usdMock.address, _1_000))
         .to.emit(usdMock, "Transfer")
         .withArgs(eveWallet, treasuryAddress, _1_000);
 
