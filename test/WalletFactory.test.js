@@ -70,6 +70,8 @@ contract("WalletFactory", function (accounts) {
     const factoryAddress = "TAtb9skGf5JU62NKYPY1G8THDWV9T7mx53";
     const factoryAddressHex = tronWeb.address.toHex(factoryAddress);
     const deployerAddressHex = tronWeb.address.toHex(deployer);
+    const nileFactoryAddress = "TCX2uhV4HjcWRB7hrTQL57fFRdxgiyypEc";
+    const nileFactoryAddressHex = tronWeb.address.toHex(nileFactoryAddress);
     const bytecode = Wallet.bytecode;
     const initCodeHash = keccak256(bytecode);
     let generatedAddress;
@@ -102,5 +104,9 @@ contract("WalletFactory", function (accounts) {
     generatedAddress = getCreate2TronAddress(deployerAddressHex, USER_IDENTIFIER_2, bytecode);
     log(deployer, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
     expect(generatedAddress).to.be.equal("TDnG8tZiaCEL8SwQNLWX3wa1HiDdeex7x5");
+
+    generatedAddress = getCreate2TronAddress(nileFactoryAddressHex, USER_IDENTIFIER_3, bytecode);
+    log(nileFactoryAddress, USER_IDENTIFIER_3, INIT_CODE_HASH, generatedAddress);
+    expect(generatedAddress).to.be.equal("TUFaA5dS9WJpu3n9pPKSK62WUdDGLhVyLY");
   });
 });

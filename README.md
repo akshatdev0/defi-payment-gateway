@@ -177,3 +177,43 @@ docker run -it \
 - `hdPath=m/44'/60'/0'/0` sets a custom bit39 hdPath
 - `formatJson=true` formats the output
 - `preapprove=...` pre approved proposals (see below for more help)
+
+### Bandwidth & Energy Consumption
+
+1. WalletFactory Deployment
+
+```
+  A) Running migration: 1_initial_migration.js
+   - Bandwidth : 957
+   - Energy    : 114,068
+
+  B) Saving successful migration to network...
+   - Bandwidth : 314
+   - Energy    : 20,369
+
+  C) Running migration: 2_deploy_wallet_factory.js
+   - Bandwidth : 5,934
+   - Energy    : 932,022
+
+  D) Saving successful migration to network...
+   - Bandwidth : 314
+   - Energy    : 20,369
+
+  TOTAL:
+  Bandwidth = 7,519
+  Energy    = 1,086,828
+```
+
+2. User Smart-Wallet Creation
+
+```
+  Bandwidth = 314
+  Energy    = 454,347
+```
+
+3. Smart-Wallet Token Withdrawal to Treasury
+
+```
+  Bandwidth = 379
+  Energy    = 30,288
+```
