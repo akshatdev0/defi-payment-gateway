@@ -16,7 +16,8 @@ exports.getCreate2Address = (sender, salt, bytecode) => {
 };
 
 exports.getCreate2TronAddress = (sender, salt, bytecode) => {
-  const create2Inputs = ["0x41", sender, salt, keccak256(bytecode)];
+  const initcode = keccak256(bytecode);
+  const create2Inputs = ["0x41", tronWeb.address.toHex(sender), salt, initcode];
   const sanitizedInputs = `0x${create2Inputs.map(i => i.slice(2)).join("")}`;
   const ethAddress = getAddress(`0x${keccak256(sanitizedInputs).slice(-40)}`);
   return tronWeb.address.fromHex(`41${ethAddress.slice(2)}`);

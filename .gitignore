@@ -19,7 +19,7 @@ node_modules/
 types/
 
 # files
-*.env
+*.env*
 *.log
 *.tsbuildinfo
 coverage.json

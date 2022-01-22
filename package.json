@@ -63,9 +63,9 @@
   "scripts": {
     "compile": "tronbox compile",
     "test": "tronbox test",
-    "deploy": "source .env && tronbox migrate --network mainnet",
-    "deploy:shasta": "source .env && tronbox migrate --network shasta",
-    "deploy:nile": "source .env && tronbox migrate --network nile",
+    "deploy": "source .env.tron && tronbox migrate --network mainnet",
+    "deploy:shasta": "source .env.tron && tronbox migrate --network shasta",
+    "deploy:nile": "source .env.tron && tronbox migrate --network nile",
     "lint": "yarn run lint:sol && yarn run lint:ts && yarn run prettier:check",
     "lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
     "lint:js": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js .",
