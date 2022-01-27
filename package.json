@@ -62,7 +62,7 @@
   },
   "scripts": {
     "compile": "tronbox compile",
-    "test": "tronbox test",
+    "test": "tronbox test test/AddressGeneration.test.js",
     "deploy": "source .env.tron && tronbox migrate --network mainnet",
     "deploy:shasta": "source .env.tron && tronbox migrate --network shasta",
     "deploy:nile": "source .env.tron && tronbox migrate --network nile",
