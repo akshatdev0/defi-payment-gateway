@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.6;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
@@ -42,7 +42,7 @@ contract WalletFactory is Initializable, AccessControlUpgradeable {
         return Wallet(wallet).transfer(token, treasury, amount);
     }
 
-    function updateTreasury(address newTreasury) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {
+    function updateTreasury(address newTreasury) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(newTreasury != address(0), "WalletFactory: new treasury is the zero address");
         address oldTreasury = treasury;
         treasury = newTreasury;

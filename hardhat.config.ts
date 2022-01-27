@@ -125,7 +125,7 @@ const config: HardhatUserConfig = {
     deployments: "./deployments",
   },
   solidity: {
-    version: "0.8.3",
+    version: "0.8.6",
     settings: {
       // metadata: {
       // Not including the metadata hash

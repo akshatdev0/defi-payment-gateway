@@ -34,7 +34,7 @@ describe("WalletFactory Unit Tests", function () {
   const USER_IDENTIFIER_1 = keccak("1");
   const USER_IDENTIFIER_2 = keccak("2");
   const _1_000 = bigNumberify("1000000000");
-  const INIT_CODE_HASH = "0x79b8071417ed7109c7e1d6474ccec39a75b4578c3a526aedd173f5536b17d0ea";
+  const INIT_CODE_HASH = "0x409371fa6d198df9c1442944c46b5414ef4adc979d0f5e3534ef791126da3773";
 
   before(async function () {
     [deployer, admin, app, treasury, other, authorized] = await ethers.getSigners();
@@ -126,19 +126,19 @@ describe("WalletFactory Unit Tests", function () {
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x9e75BeE40d2f732bA0b54e7a3daF11e79C50E9bf");
+          expect(generatedAddress).to.be.equal("0x2Cb04a2C9B68924B6effa8e232AB78B8dD58e87D");
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x6F0eb466917196E4a0510c3c7e15fBd39853EF5B");
+          expect(generatedAddress).to.be.equal("0xFffA7Cdf902690f62826A8B48719962cb96CA959");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
           log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0xe556F081634891b401b7Fe34bD1624E72AcE7BE8");
+          expect(generatedAddress).to.be.equal("0x6eaf268f90000882169224f9eb1C0F19f6A0D03D");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_2, bytecode);
           log(deployerAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0xc93Aa68747e99EB93f329083E55efA1C7A78142f");
+          expect(generatedAddress).to.be.equal("0x6724Ba649E10706cf315463E3693DDcA844DFf18");
         });
       });
     });
