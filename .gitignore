@@ -19,7 +19,8 @@ node_modules/
 types/
 
 # files
-*.env*
+*.env
+*.env.tron
 *.log
 *.tsbuildinfo
 coverage.json
