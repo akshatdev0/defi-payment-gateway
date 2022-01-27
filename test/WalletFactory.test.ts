@@ -126,11 +126,11 @@ describe("WalletFactory Unit Tests", function () {
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_1, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x8CdA19052d7DF0364adebE24CA9fb14723a5D771");
+          expect(generatedAddress).to.be.equal("0x9e75BeE40d2f732bA0b54e7a3daF11e79C50E9bf");
 
           generatedAddress = getCreate2Address(walletFactory.address, USER_IDENTIFIER_2, bytecode);
           log(walletFactory.address, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-          expect(generatedAddress).to.be.equal("0x30Fc161731F80f08C316B6995bfb99cCa1a3c44E");
+          expect(generatedAddress).to.be.equal("0x6F0eb466917196E4a0510c3c7e15fBd39853EF5B");
 
           generatedAddress = getCreate2Address(deployerAddress, USER_IDENTIFIER_1, bytecode);
           log(deployerAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);

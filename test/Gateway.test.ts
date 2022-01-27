@@ -11,14 +11,16 @@ chai.use(smock.matchers);
 describe("Gateway Tests", function () {
   // Accounts
   let deployer: Signer;
-  let owner: Signer;
+  let admin: Signer;
+  let app: Signer;
   let treasury: Signer;
   let alice: Signer;
   let bob: Signer;
   let eve: Signer;
 
   let deployerAddress: string;
-  let ownerAddress: string;
+  let adminAddress: string;
+  let appAddress: string;
   let treasuryAddress: string;
   let aliceAddress: string;
   let bobAddress: string;
@@ -43,22 +45,25 @@ describe("Gateway Tests", function () {
   const _400_000 = bigNumberify("400000000000");
 
   before(async function () {
-    [deployer, owner, treasury, alice, bob, eve] = await ethers.getSigners();
-    [deployerAddress, ownerAddress, treasuryAddress, aliceAddress, bobAddress, eveAddress] = await Promise.all([
-      deployer.getAddress(),
-      owner.getAddress(),
-      treasury.getAddress(),
-      alice.getAddress(),
-      bob.getAddress(),
-      eve.getAddress(),
-    ]);
+    [deployer, admin, app, treasury, alice, bob, eve] = await ethers.getSigners();
+    [deployerAddress, adminAddress, appAddress, treasuryAddress, aliceAddress, bobAddress, eveAddress] =
+      await Promise.all([
+        deployer.getAddress(),
+        admin.getAddress(),
+        app.getAddress(),
+        treasury.getAddress(),
+        alice.getAddress(),
+        bob.getAddress(),
+        eve.getAddress(),
+      ]);
   });
 
   beforeEach(async function () {
     // Deploy WalletFactory
     const walletFactory__factory = await new WalletFactory__factory(deployer);
     walletFactory = (await upgrades.deployProxy(walletFactory__factory, [
-      ownerAddress,
+      adminAddress,
+      appAddress,
       treasuryAddress,
     ])) as WalletFactory;
     await walletFactory.deployed();
@@ -103,18 +108,18 @@ describe("Gateway Tests", function () {
       expect(await usdMock.balanceOf(bobAddress)).to.equal(_200_000.sub(_5_000));
       expect(await usdMock.balanceOf(bobWallet)).to.equal(_5_000);
 
-      // After detecting deposit, owner creates smart-wallet for Bob at the pre-determined address
-      await expect(walletFactory.connect(owner).createWallet(identifier))
+      // After detecting deposit, app creates smart-wallet for Bob at the pre-determined address
+      await expect(walletFactory.connect(app).createWallet(identifier))
         .to.emit(walletFactory, "WalletCreated")
         .withArgs(identifier, bobWallet);
 
-      // Owner fails to transfer amount exceeding balance from Bob's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(bobWallet, usdMock.address, _5_001)).to.be.revertedWith(
+      // App fails to transfer amount exceeding balance from Bob's smart-wallet to treasury
+      await expect(walletFactory.connect(app).transferFrom(bobWallet, usdMock.address, _5_001)).to.be.revertedWith(
         "ERC20: transfer amount exceeds balance",
       );
 
-      // Owner can transfer less amount from Bob's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(bobWallet, usdMock.address, _3_000))
+      // App can transfer less amount from Bob's smart-wallet to treasury
+      await expect(walletFactory.connect(app).transferFrom(bobWallet, usdMock.address, _3_000))
         .to.emit(usdMock, "Transfer")
         .withArgs(bobWallet, treasuryAddress, _3_000);
 
@@ -123,8 +128,8 @@ describe("Gateway Tests", function () {
       expect(await usdMock.balanceOf(treasuryAddress)).to.equal(_3_000);
       expect(await usdMock.balanceOf(bobWallet)).to.equal(_2_000);
 
-      // Owner transfers whole amount from Bob's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(bobWallet, usdMock.address, _2_000))
+      // App transfers whole amount from Bob's smart-wallet to treasury
+      await expect(walletFactory.connect(app).transferFrom(bobWallet, usdMock.address, _2_000))
         .to.emit(usdMock, "Transfer")
         .withArgs(bobWallet, treasuryAddress, _2_000);
 
@@ -163,18 +168,18 @@ describe("Gateway Tests", function () {
       expect(await usdMock.balanceOf(eveAddress)).to.equal(_300_000.sub(_1_000));
       expect(await usdMock.balanceOf(eveWallet)).to.equal(_1_000);
 
-      // After detecting Alice's deposit, owner creates smart-wallet for Alice at the pre-determined address
-      await expect(walletFactory.connect(owner).createWallet(ALICE_IDENTIFIER))
+      // After detecting Alice's deposit, app creates smart-wallet for Alice at the pre-determined address
+      await expect(walletFactory.connect(app).createWallet(ALICE_IDENTIFIER))
         .to.emit(walletFactory, "WalletCreated")
         .withArgs(ALICE_IDENTIFIER, aliceWallet);
 
-      // After detecting Eve's deposit, owner creates smart-wallet for Eve at the pre-determined address
-      await expect(walletFactory.connect(owner).createWallet(EVE_IDENTIFIER))
+      // After detecting Eve's deposit, app creates smart-wallet for Eve at the pre-determined address
+      await expect(walletFactory.connect(app).createWallet(EVE_IDENTIFIER))
         .to.emit(walletFactory, "WalletCreated")
         .withArgs(EVE_IDENTIFIER, eveWallet);
 
-      // Owner transfers funds from Alice's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(aliceWallet, usdMock.address, _3_000))
+      // App transfers funds from Alice's smart-wallet to treasury
+      await expect(walletFactory.connect(app).transferFrom(aliceWallet, usdMock.address, _3_000))
         .to.emit(usdMock, "Transfer")
         .withArgs(aliceWallet, treasuryAddress, _3_000);
 
@@ -183,8 +188,8 @@ describe("Gateway Tests", function () {
       expect(await usdMock.balanceOf(treasuryAddress)).to.equal(_3_000);
       expect(await usdMock.balanceOf(aliceWallet)).to.equal(_0);
 
-      // Owner transfers funds from Eve's smart-wallet to treasury
-      await expect(walletFactory.connect(owner).transferFrom(eveWallet, usdMock.address, _1_000))
+      // App transfers funds from Eve's smart-wallet to treasury
+      await expect(walletFactory.connect(app).transferFrom(eveWallet, usdMock.address, _1_000))
         .to.emit(usdMock, "Transfer")
         .withArgs(eveWallet, treasuryAddress, _1_000);
 
