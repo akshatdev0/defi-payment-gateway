@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Wallet is Initializable, Ownable {
-    function initialize(address owner_) public initializer {
+    function initialize(address owner_) external initializer {
         require(owner_ != address(0), "Wallet: new owner is the zero address");
         _transferOwnership(owner_);
     }
@@ -15,7 +15,7 @@ contract Wallet is Initializable, Ownable {
         address token,
         address recipient,
         uint256 amount
-    ) public onlyOwner returns (bool) {
+    ) external onlyOwner returns (bool) {
         return IERC20(token).transfer(recipient, amount);
     }
 }
