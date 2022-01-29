@@ -8,7 +8,7 @@ contract("Address Generation", function (accounts) {
   const USER_IDENTIFIER_3 = keccak("68168199-96a9-4515-99b8-7ef44f13d209");
   const USER_IDENTIFIER_4 = keccak("c98b6212-80aa-470c-9741-e427e0cdda80");
 
-  const INIT_CODE_HASH = "0xe0dba80b6b1cd71e9dc972924f072016008963014cd10c34d5ebd96d9b93ddcc";
+  const INIT_CODE_HASH = "0xa800a84a1e76d9ebed54ef4780c3213798df585d5fa31cb9beb636eccb0a97f8";
 
   it("generates correct addresses", async () => {
     const factoryAddress = "TAtb9skGf5JU62NKYPY1G8THDWV9T7mx53";
@@ -32,18 +32,18 @@ contract("Address Generation", function (accounts) {
 
     generatedAddress = getCreate2TronAddress(factoryAddress, USER_IDENTIFIER_1, bytecode);
     log(factoryAddress, USER_IDENTIFIER_1, INIT_CODE_HASH, generatedAddress);
-    assert.equal(generatedAddress, "TLsYCgQ82LHeJLbPtondUN4wGm9ZpjDHuo");
+    assert.equal(generatedAddress, "TTugLVdaFLYUZ5CdzUpu2LppMF55RAurWy");
 
     generatedAddress = getCreate2TronAddress(factoryAddress, USER_IDENTIFIER_2, bytecode);
     log(factoryAddress, USER_IDENTIFIER_2, INIT_CODE_HASH, generatedAddress);
-    assert.equal(generatedAddress, "THNTVbyvX1BHHphXw5N9kUhg5hMYC1fk3r");
+    assert.equal(generatedAddress, "TKPqvci1TwVkkJatoQcboso2Jw6tNdUryn");
 
     generatedAddress = getCreate2TronAddress(nileFactoryAddress, USER_IDENTIFIER_3, bytecode);
     log(nileFactoryAddress, USER_IDENTIFIER_3, INIT_CODE_HASH, generatedAddress);
-    assert.equal(generatedAddress, "TWnvbujUHt2qXZkk5e1m2MYAepQuArfXAU");
+    assert.equal(generatedAddress, "TQuCvgU5njYMhnL47ajAoqhMZirqtQiph9");
 
     generatedAddress = getCreate2TronAddress(nileFactoryAddress, USER_IDENTIFIER_4, bytecode);
     log(nileFactoryAddress, USER_IDENTIFIER_4, INIT_CODE_HASH, generatedAddress);
-    assert.equal(generatedAddress, "TQ4wSo6aREXV8sfoMtpPnUhUBtcG9EkU6n");
+    assert.equal(generatedAddress, "TEXYFRCmwbbyyuJG1djHanic1nNSFhspWP");
   });
 });
